@@ -3,6 +3,9 @@ const fs = require('fs');
 function parseFile (indata, outdata, delimiter = ';') {
   let data;
 
+  if (fs.existsSync(outdata)) {
+    fs.unlinkSync(outdata);
+  }
   // Open the output file in write mode
   const outfile = fs.openSync(outdata, 'w');
     
@@ -14,18 +17,18 @@ function parseFile (indata, outdata, delimiter = ';') {
   }
 
   data.slice(1).forEach(line => {
-    const lineArr = line.split(';')
+    const lineArr = line.split(delimiter)
     const review = lineArr[0].trim();
     const sentiment = lineArr[1].trim();    
     console.log('review: ', review.substring(0,20));
     console.log('sentiment: ', sentiment);
+    const outputLine = sentiment + delimiter + review.substring(0,20) + '\n';
+    fs.writeSync(outfile, outputLine);       
   });
-
-  
-
+  fs.closeSync(outfile);
+  console.log(data.length - 1); 
+  return data.length - 1;
 }
-
-
 
 let test_input = './testing/testdata_5.csv'
 parseFile(test_input, './outputfile.csv');
