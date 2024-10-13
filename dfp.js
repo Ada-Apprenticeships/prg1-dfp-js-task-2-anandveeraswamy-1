@@ -2,19 +2,21 @@ const fs = require('fs');
 
 function parseFile (indata, outdata, delimiter = ';') {
   let data;
-
-  if (fs.existsSync(outdata)) {
-    fs.unlinkSync(outdata);
-  }
-  // Open the output file in write mode
-  const outfile = fs.openSync(outdata, 'w');
-    
+  
+  // Open input file, return -1 if it does not exist
   try {
       data = fs.readFileSync(indata, 'utf8').split('\n');
   } catch (error) {
       console.error('Error reading the file:', error.message);
       return -1; // Return -1 if the file does not exist or cannot be read
   }
+  
+  // delete output file if it already exists
+  if (fs.existsSync(outdata)) {
+    fs.unlinkSync(outdata);
+  }
+  // Open the output file in write mode
+  const outfile = fs.openSync(outdata, 'w');
 
   data.slice(1).forEach(line => {
     const lineArr = line.split(delimiter)
